@@ -66,7 +66,7 @@ fi
 ### Usage
 To use this script, save it to a file (e.g., create_users.sh), and create a file `input.txt` `input file containing user;groups entries`.
 
-Change the user to root, make the file executable, and run it with the path to your input file as an argument:
+Change the user to root `sudo -s`, make the file executable, and run it with the path to your input file as an argument:
 
 input.txt
 ```bash
@@ -83,17 +83,15 @@ on the Command Line(CMD) | Terminal
 
 ## Conclusion
 
-In this module, we have seen how to configure EKS to provide finer access to users combining IAM Groups and Kubernetes RBAC.
-You can create different groups depending on your needs, configure their associated RBAC access in your cluster, and simply add or remove users from the group to grant or revoke access to your cluster.
-
-Users will only have to configure their AWS CLI in order to automatically retrieve their associated rights in your cluster.
+This script should be run with sudo to ensure it has the necessary permissions to create users, modify groups, and write to the specified log and password files.
 
 
-## Clean Up
-
-rm /tmp/*.json
-rm /tmp/kubeconfig*
-
-# reset aws credentials and config files
-rm  ~/.aws/{config,credentials}
-aws configure set default.region ${AWS_REGION}
+## verify the script
+```bash
+  ~ cd /var/log/
+  ~ ls
+  ~ user_management.log
+  ~ cd /var/secure/
+  ~ ls
+  ~ user_passwords.csv
+```
