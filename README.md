@@ -65,8 +65,9 @@ fi
 
 ### Usage
 To use this script, save it to a file (e.g., create_users.sh), and create a file `input.txt` change the user to root, make the file executable, and run it with the path to your input file as an argument:
+
 input.txt
-```bash input.txt
+```bash
     user1;group1,group2
     user2;group3,group4
 ```
