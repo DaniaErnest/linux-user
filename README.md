@@ -1,6 +1,6 @@
-Linux User Creation Bash Script
+## Linux User Creation Bash Script
 
-# Log and Password File Setup
+### Log and Password File Setup
 
 * The script ensures that the **/var/secure** directory exists and has the appropriate permissions.
 * It creates the password file **/var/secure/user_passwords.csv** and ensures only the owner can read it.
@@ -11,7 +11,7 @@ touch "$PASSWORD_FILE"
 chmod 600 "$PASSWORD_FILE"
 ```
 
-## Message_Log Function
+### Message_Log Function
 Logging Function: The log_message function logs messages to **/var/log/user_management.log** with a timestamp.
 ```bash
 log_message() {
