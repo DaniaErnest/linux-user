@@ -64,11 +64,11 @@ if [ $# -eq 0 ]; then
 fi
 
 input_file=$1
-log_message "Starting user management script."
+log_message "Starting users and groups script."
 
 # Read the input file and process each line
 while IFS=';' read -r username groups; do
     setup_user "$username" "$groups"
 done < "$input_file"
 
-log_message "User management script completed."
+log_message "Users created with password and set to groups script completed"
