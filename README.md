@@ -72,6 +72,7 @@ input.txt
     user2;group3,group4
 ```
 
+on the command line(CMD)|Terminal
 ```bash
     sudo -s
     chmod +x user_management.sh
