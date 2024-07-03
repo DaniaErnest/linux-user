@@ -12,10 +12,19 @@ chmod 600 "$PASSWORD_FILE"
 ```
 
 ### Message_Log Function
-Logging Function: The log_message function logs messages to **/var/log/user_management.log** with a timestamp.
+The log_message function logs messages to **/var/log/user_management.log** with a timestamp.
 ```bash
 log_message() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
+}
+```
+
+### generate_password Function
+The generate_password function generates a random password of a specified length (12 characters in this case).
+```
+generate_password() {
+    local password_length=12
+    tr -dc A-Za-z0-9 </dev/urandom | head -c $password_length
 }
 ```
 
