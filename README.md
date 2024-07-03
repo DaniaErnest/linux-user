@@ -21,11 +21,32 @@ log_message() {
 
 ### generate_password Function
 The generate_password function generates a random password of a specified length (12 characters in this case).
-```
+```bash
 generate_password() {
     local password_length=12
     tr -dc A-Za-z0-9 </dev/urandom | head -c $password_length
 }
+```
+### Setup_User Function
+The setup_user function creates users, adds them to groups, sets up home directories with appropriate permissions, and logs each action. It also generates and stores passwords securely.
+```bash
+setup_user() {
+    local username=$1
+    local groups=$2
+
+    # Create the user
+    if ! id -u "$username" &>/dev/null; then
+        password=$(generate_password)
+        useradd -m -s /bin/bash "$username"
+        echo "$username:$password" | chpasswd
+        log_message "User $username created."
+
+        # Store the username and password
+        echo "$username,$password" >> "$PASSWORD_FILE"
+        log_message "Password for $username stored."
+    else
+        log_message "User $username already exists."
+    fi
 ```
 
 ## Conclusion
