@@ -49,6 +49,33 @@ setup_user() {
     fi
 ```
 
+### Main Script
+The main part of the script takes an input file as an argument, reads it line by line, and processes each line to create users and groups, set up home directories, and log actions.
+```bash
+if [ $# -eq 0 ]; then
+    log_message "Usage: $0 <input_file>"
+    exit 1
+fi
+```
+### This makes sure you run the script with an input_file, i.e input.txt
+```bash
+    input_file=$1
+    log_message "Starting user management script."
+```
+
+### Usage
+To use this script, save it to a file (e.g., create_users.sh), and create a file `input.txt` change the user to root, make the file executable, and run it with the path to your input file as an argument:
+```bash
+    user1;group1,group2
+    user2;group3,group4
+```
+
+```bash
+    sudo -s
+    chmod +x user_management.sh
+    ./create_users.sh input.txt
+```
+
 ## Conclusion
 
 In this module, we have seen how to configure EKS to provide finer access to users combining IAM Groups and Kubernetes RBAC.
