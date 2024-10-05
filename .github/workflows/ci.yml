@@ -1,16 +1,53 @@
-name: Fly Deploy
+name: Run Unit Tests
+
+# Trigger the workflow on push or pull request events
 on:
-  push:
+  push: # Run tests on every push to any branch
     branches:
-      - main # change to main if needed
+      - "**" # This wildcard includes all branches
+  pull_request: # Run tests on every PR action
+    branches:
+      - "**"
+
 jobs:
+  test:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, 3.10] # Test on multiple Python versions (if using Python)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 # Checkout the repository code
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }} # Use the matrix Python versions
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  # Install project dependencies
+          pip install pytest               # Install pytest for running tests
+
+      - name: Run Unit Tests
+        run: |
+          pytest --maxfail=1 --disable-warnings  # Run tests with pytest
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: pytest-report.xml # Upload test result artifacts if available
   slack-notify:
-    name: Slack-Notification
-    needs: [deploy]
-    if: always()
-    uses: ./.github/workflows/slack.yml
-    with:
-      STATUS: "${{ needs.run-test.result }} ${{ needs.build-app-image.result }}"
-    secrets:
-      SLACK_PR_CHANNEL_ID: ${{ secrets.SLACK_PR_CHANNEL_ID }}
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    - name: Slack-Notification
+      needs: [deploy]
+      if: always()
+      uses: ./.github/workflows/slack.yml
+      with:
+        STATUS: "${{ needs.run-test.result }} ${{ needs.build-app-image.result }}"
+      secrets:
+        SLACK_PR_CHANNEL_ID: ${{ secrets.SLACK_PR_CHANNEL_ID }}
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
