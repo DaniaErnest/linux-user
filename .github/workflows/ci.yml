@@ -13,7 +13,7 @@ jobs:
       - name: Send Slack Notification
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          SLACK_CHANNEL_ID: "YOUR_CHANNEL_ID" # Replace with your channel ID or use dynamic discovery
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_PR_CHANNEL_ID }} # Replace with your channel ID or use dynamic discovery
 
         run: |
           curl -X POST "https://slack.com/api/chat.postMessage" \
