@@ -1,4 +1,4 @@
-name: Notify Slack on Push
+name: Notify-Slack on Push
 
 on:
   push:

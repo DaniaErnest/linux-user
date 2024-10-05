@@ -1,4 +1,4 @@
-name: Reusable Slack Notification for PR Events
+name: Re-usable Slack Notification for PR Events
 
 on:
   workflow_call:
