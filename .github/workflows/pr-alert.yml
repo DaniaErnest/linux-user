@@ -1,0 +1,13 @@
+name: PR-Slack Notification
+
+on:
+  pull_request:
+    types: [opened, closed, reopened, synchronize]
+
+jobs:
+  call-slack-alert:
+    uses: owner/repository/.github/workflows/pr-slack-alert.yml@main # Replace with your reusable workflow's repo
+    with:
+      slack_channel_id: ${{ secrets.SLACK_PR_CHANNEL_ID }}
+      slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+      pr_action: ${{ github.event.action }}
