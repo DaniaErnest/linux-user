@@ -42,12 +42,12 @@ jobs:
           name: test-results
           path: pytest-report.xml # Upload test result artifacts if available
   slack-notify:
-    - name: Slack-Notification
-      needs: [deploy]
-      if: always()
-      uses: ./.github/workflows/slack.yml
-      with:
-        STATUS: "${{ needs.run-test.result }} ${{ needs.build-app-image.result }}"
-      secrets:
-        SLACK_PR_CHANNEL_ID: ${{ secrets.SLACK_PR_CHANNEL_ID }}
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    name: Slack-Notification
+    needs: [deploy]
+    if: always()
+    uses: ./.github/workflows/slack.yml
+    with:
+      STATUS: "${{ needs.run-test.result }} ${{ needs.build-app-image.result }}"
+    secrets:
+      SLACK_PR_CHANNEL_ID: ${{ secrets.SLACK_PR_CHANNEL_ID }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
