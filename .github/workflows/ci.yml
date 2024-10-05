@@ -1,27 +1,31 @@
-name: Fly Deploy
+name: Notify Slack on Push
+
 on:
   push:
     branches:
-      - main # change to main if needed
-jobs:
-  deploy:
-    name: Deploy app
-    runs-on: ubuntu-latest
-    concurrency: deploy-group # optional: ensure only one action runs at a time
-    steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - "*" # Change this to your preferred branch
 
-  slack-notify:
-    name: Slack-Notification
-    needs: [deploy]
-    if: always()
-    uses: ./.github/workflows/slack.yml
-    with:
-      STATUS: "${{ needs.run-test.result }} ${{ needs.build-app-image.result }}"
-    secrets:
-      SLACK_PR_CHANNEL_ID: ${{ secrets.SLACK_PR_CHANNEL_ID }}
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Slack Notification
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: "YOUR_CHANNEL_ID" # Replace with your channel ID or use dynamic discovery
+
+        run: |
+          curl -X POST "https://slack.com/api/chat.postMessage" \
+          -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+          -H "Content-Type: application/json" \
+          --data '{
+            "channel": "'$SLACK_CHANNEL_ID'",
+            "text": "A new push was made to branch: ${{ github.ref }}\nCommit: ${{ github.sha }}\nPushed by: ${{ github.actor }}",
+            "attachments": [
+              {
+                "color": "#36a64f",
+                "text": "Repository: ${{ github.repository }}\nCommit Message: ${{ github.event.head_commit.message }}"
+              }
+            ]
+          }'
