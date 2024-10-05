@@ -1,53 +1,31 @@
-name: Run Unit Tests
+name: Notify Slack on Push
 
-# Trigger the workflow on push or pull request events
 on:
-  push: # Run tests on every push to any branch
+  push:
     branches:
-      - "**" # This wildcard includes all branches
-  pull_request: # Run tests on every PR action
-    branches:
-      - "**"
+      - main # Change this to your preferred branch
 
 jobs:
-  test:
-    runs-on: ubuntu-latest # Use the latest Ubuntu runner
-
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9, 3.10] # Test on multiple Python versions (if using Python)
+  notify:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3 # Checkout the repository code
+      - name: Send Slack Notification
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_PR_CHANNEL_ID }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }} # Use the matrix Python versions
-
-      - name: Install dependencies
         run: |
-          pip install -r requirements.txt  # Install project dependencies
-          pip install pytest               # Install pytest for running tests
-
-      - name: Run Unit Tests
-        run: |
-          pytest --maxfail=1 --disable-warnings  # Run tests with pytest
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: pytest-report.xml # Upload test result artifacts if available
-  slack-notify:
-    name: Slack-Notification
-    needs: [deploy]
-    if: always()
-    uses: ./.github/workflows/slack.yml
-    with:
-      STATUS: "${{ needs.run-test.result }} ${{ needs.build-app-image.result }}"
-    secrets:
-      SLACK_PR_CHANNEL_ID: ${{ secrets.SLACK_PR_CHANNEL_ID }}
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          curl -X POST "https://slack.com/api/chat.postMessage" \
+          -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+          -H "Content-Type: application/json" \
+          --data '{
+            "channel": "'$SLACK_CHANNEL_ID'",
+            "text": "A new push was made to branch: ${{ github.ref }}\nCommit: ${{ github.sha }}\nPushed by: ${{ github.actor }}",
+            "attachments": [
+              {
+                "color": "#36a64f",
+                "text": "Repository: ${{ github.repository }}\nCommit Message: ${{ github.event.head_commit.message }}"
+              }
+            ]
+          }'
