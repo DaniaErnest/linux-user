@@ -22,6 +22,7 @@ jobs:
 
     steps:
       - name: Send Slack Notification for PR
+
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_PR_CHANNEL_ID }}
